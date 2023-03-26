@@ -6,7 +6,7 @@ pygame.display.set_caption("ISS Defense")
 
 FPS = 60
 
-BACKGROUND_IMAGE = pygame.image.load("Images/background.png")
+BACKGROUND_IMAGE = pygame.image.load("ISS-Defense/Images/background.png")
 
 WIN.blit(BACKGROUND_IMAGE, (0, 0))
 
