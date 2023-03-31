@@ -1,5 +1,3 @@
-import pygame
-
 class GameObject:
     def __init__(self, x, y, width, height, image):
         self.x = x
