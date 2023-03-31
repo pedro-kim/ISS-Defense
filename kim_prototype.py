@@ -1,11 +1,20 @@
 import pygame, sys, os
 import numpy as np
+from constants.colors import WHITE, MUSTARD, BLACK, RED
+from constants.velocities import ISS_VEL, PLAYER_SHIP_VEL, BULLET_VEL, METEOR_VEL
+from constants.dimensions import (
+    WIDTH,
+    HEIGHT,
+    SPACESHIP_WIDTH, SPACESHIP_HEIGHT,
+    BULLET_WIDTH, BULLET_HEIGHT,
+    ISS_WIDTH, ISS_HEIGHT,
+    METEOR_WIDTH, METEOR_HEIGHT
+)
+from GameObjects.Button import Button
+from GameObjects.Ship import Ship
 
-WIDTH, HEIGHT = 540, 960
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ISS Defense")
-
-WHITE = (255, 255, 255)
 
 FPS = 60
 
@@ -15,17 +24,6 @@ BACKGROUND_IMAGE = pygame.transform.scale(
 )
 
 PLAYER_SHIP_HEALTH = 10
-
-ISS_VEL = 1
-METEOR_VEL = 2
-ENEMY_SHIP_VEL = 3
-PLAYER_SHIP_VEL = 5
-BULLET_VEL = 10
-
-SPACESHIP_WIDTH, SPACESHIP_HEIGHT = 55, 40
-BULLET_WIDTH, BULLET_HEIGHT = 10, 20
-ISS_WIDTH, ISS_HEIGHT = 490, 353
-METEOR_WIDTH, METEOR_HEIGHT = 80, 70
 
 SPACE_STATION = pygame.transform.scale(
     pygame.image.load(os.path.join("Images", "Station Center.png")),
@@ -65,30 +63,36 @@ def iss_start(space_station):
 
 
 def handle_movement_player(keys_pressed, player_ship):
-    if keys_pressed[pygame.K_a] and player_ship.x - PLAYER_SHIP_VEL > 0:  # LEFT
-        player_ship.x -= PLAYER_SHIP_VEL
+    if (
+        (keys_pressed[pygame.K_w] or keys_pressed[pygame.K_UP])
+        and player_ship.y - PLAYER_SHIP_VEL > 0
+    ):  # UP
+        player_ship.move(0,-PLAYER_SHIP_VEL)
 
     if (
-        keys_pressed[pygame.K_d]
-        and player_ship.x + PLAYER_SHIP_VEL + player_ship.width < BORDER.x
-    ):  # RIGHT
-        player_ship.x += PLAYER_SHIP_VEL
-
-    if keys_pressed[pygame.K_w] and player_ship.y - PLAYER_SHIP_VEL > 0:  # UP
-        player_ship.y -= PLAYER_SHIP_VEL
+        (keys_pressed[pygame.K_a] or keys_pressed[pygame.K_LEFT]) 
+        and player_ship.x - PLAYER_SHIP_VEL > 0
+    ):  # LEFT
+        player_ship.move(-PLAYER_SHIP_VEL, 0)
 
     if (
-        keys_pressed[pygame.K_s]
+        (keys_pressed[pygame.K_s] or keys_pressed[pygame.K_DOWN])
         and player_ship.y + PLAYER_SHIP_VEL + player_ship.height < HEIGHT - 15
     ):  # DOWN
-        player_ship.y += PLAYER_SHIP_VEL
+        player_ship.move(0, PLAYER_SHIP_VEL)
+
+    if (
+        (keys_pressed[pygame.K_d] or keys_pressed[pygame.K_RIGHT])
+        and player_ship.x + PLAYER_SHIP_VEL + player_ship.width < BORDER.x
+    ):  # RIGHT
+        player_ship.move(PLAYER_SHIP_VEL, 0)
+
 
 # def handle_enemy_movement(enemy_ship, bullets):
 #     enemy_ship.y += ENEMY_SHIP_VEL
 #     for bullet in bullets:
 #         if enemy_ship.colliderect(bullet):
             
-
 
 def handle_player_bullets(bullets, player_ship, enemy_ship):
     for bullet in bullets:
@@ -120,7 +124,7 @@ def handle_meteors(meteors, player_ship, player_bullets):
                 player_bullets.remove(bullet)
 
 
-def draw_window(space_station, player_ship, enemy_ship, player_bullets, enemy_bullets, meteors):
+def draw_window(space_station, player_ship, enemy_ship, player_bullets, enemy_bullets, meteors, button_pause):
     WIN.blit(BACKGROUND_IMAGE, (0, 0))
     pygame.draw.rect(WIN, WHITE, BORDER)
 
@@ -137,6 +141,8 @@ def draw_window(space_station, player_ship, enemy_ship, player_bullets, enemy_bu
     for meteor in meteors:
         WIN.blit(BROWN_METEOR, (meteor.x, meteor.y))
 
+    button_pause.draw(WIN)
+
     pygame.display.update()
 
 
@@ -146,17 +152,11 @@ def main():
         (WIDTH - ISS_WIDTH) / 2, HEIGHT - ISS_HEIGHT, ISS_WIDTH, ISS_HEIGHT
     )
 
-    player = pygame.Rect(
-        (WIDTH - SPACESHIP_WIDTH) / 2,
-        HEIGHT - SPACESHIP_HEIGHT - ISS_HEIGHT,
-        SPACESHIP_WIDTH,
-        SPACESHIP_HEIGHT,
-    )
+    player = Ship(os.path.join("Images", "playerShip3_blue.png"))
     player_bullets = []
     enemy_bullets = []
 
     meteors = []
-
 
     enemy = pygame.Rect(
         (WIDTH - SPACESHIP_WIDTH) / 2, 0, SPACESHIP_WIDTH, SPACESHIP_HEIGHT
@@ -170,7 +170,53 @@ def main():
     METEOR_TIME = 0
     METEOR_TIME_DELAY = 500
 
-    run = True
+    # Telas iniciais pre-jogo
+    run = False
+
+    screenHistory = [0]
+    pygame.init()
+    clock.tick(20)
+    font = pygame.font.Font('RobotoMono-Light.ttf', 30)
+    button_play = Button(170, 100, 200, 50, RED, "Jogar", font, (255, 255, 255))
+    button_instructions = Button(170, 200, 200, 50, BLACK, "Instrucoes", font, (255, 255, 255))
+    button_history = Button(170, 300, 200, 50, BLACK, "Historia", font, (255, 255, 255))
+    button_return = Button(10, 10, 200, 50, MUSTARD, "Retornar", font, (255, 255, 255))
+
+    while not run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if button_play.is_clicked(event):
+                run = True
+            if button_instructions.is_clicked(event):
+                screenHistory.append(1)
+            if button_history.is_clicked(event):
+                screenHistory.append(2)
+            if button_return.is_clicked(event):
+                screenHistory.pop()
+
+
+        if screenHistory[-1] == 0:
+            WIN.blit(BACKGROUND_IMAGE, (0, 0))
+            button_play.draw(WIN)
+            button_instructions.draw(WIN) 
+            button_history.draw(WIN) 
+        if screenHistory[-1] == 1:
+            WIN.blit(BACKGROUND_IMAGE, (0, 0))
+            pygame.draw.rect(WIN, WHITE, BORDER)
+            button_return.draw(WIN)
+        if screenHistory[-1] == 2:
+            WIN.blit(BACKGROUND_IMAGE, (0, 0))
+            pygame.draw.rect(WIN, WHITE, BORDER)
+            button_return.draw(WIN)
+        
+
+        pygame.display.update()
+
+    button_pause = Button(10, 10, 200, 50, MUSTARD, "Pausar", font, (255, 255, 255))
+    button_despause = Button(10, 10, 200, 50, MUSTARD, "Despausar", font, (255, 255, 255))
+
     while run:
         clock.tick(FPS)
         current_time = pygame.time.get_ticks()
@@ -189,7 +235,7 @@ def main():
         if current_time - METEOR_TIME > METEOR_TIME_DELAY:
             random_meteor_x = int((WIDTH - METEOR_WIDTH) * np.random.random())
             if random_meteor_x + METEOR_WIDTH < enemy.x or random_meteor_x > enemy.x + SPACESHIP_WIDTH:
-                new_meteor = pygame.Rect(random_meteor_x, 0, METEOR_HEIGHT, METEOR_WIDTH)
+                new_meteor = pygame.Rect(random_meteor_x, -35, METEOR_HEIGHT, METEOR_WIDTH)
                 meteors.append(new_meteor)
                 METEOR_TIME = current_time
 
@@ -210,6 +256,15 @@ def main():
                     )
                     player_bullets.append(bullet)
 
+            if button_pause.is_clicked(event):
+                pause = True
+                while pause:
+                    for pause_event in pygame.event.get():
+                        if button_despause.is_clicked(pause_event):
+                            pause = False
+                    button_despause.draw(WIN)
+                    pygame.display.update()
+
         keys_pressed = pygame.key.get_pressed()
 
         iss_start(iss)
@@ -218,7 +273,7 @@ def main():
         handle_enemy_bullets(enemy_bullets, player, enemy)
         handle_meteors(meteors, player, player_bullets)
 
-        draw_window(iss, player, enemy, player_bullets, enemy_bullets, meteors)
+        draw_window(iss, player, enemy, player_bullets, enemy_bullets, meteors, button_pause)
 
 
 if __name__ == "__main__":
