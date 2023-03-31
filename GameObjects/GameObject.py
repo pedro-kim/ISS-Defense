@@ -1,6 +1,4 @@
-from pygame import Rect
-
-class GameObject(Rect):
+class GameObject:
     def __init__(self, x, y, width, height, image):
         self.x = x
         self.y = y
@@ -10,3 +8,4 @@ class GameObject(Rect):
 
     def draw(self, surface):
         surface.blit(self.image, (self.x, self.y))
+    

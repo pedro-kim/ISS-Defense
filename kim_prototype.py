@@ -11,7 +11,6 @@ from constants.dimensions import (
     METEOR_WIDTH, METEOR_HEIGHT
 )
 from GameObjects.Button import Button
-from GameObjects.Ship import Ship
 
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ISS Defense")
@@ -67,25 +66,25 @@ def handle_movement_player(keys_pressed, player_ship):
         (keys_pressed[pygame.K_w] or keys_pressed[pygame.K_UP])
         and player_ship.y - PLAYER_SHIP_VEL > 0
     ):  # UP
-        player_ship.move(0,-PLAYER_SHIP_VEL)
+        player_ship.y -= PLAYER_SHIP_VEL
 
     if (
         (keys_pressed[pygame.K_a] or keys_pressed[pygame.K_LEFT]) 
         and player_ship.x - PLAYER_SHIP_VEL > 0
     ):  # LEFT
-        player_ship.move(-PLAYER_SHIP_VEL, 0)
+        player_ship.x -= PLAYER_SHIP_VEL
 
     if (
         (keys_pressed[pygame.K_s] or keys_pressed[pygame.K_DOWN])
         and player_ship.y + PLAYER_SHIP_VEL + player_ship.height < HEIGHT - 15
     ):  # DOWN
-        player_ship.move(0, PLAYER_SHIP_VEL)
+        player_ship.y += PLAYER_SHIP_VEL
 
     if (
         (keys_pressed[pygame.K_d] or keys_pressed[pygame.K_RIGHT])
         and player_ship.x + PLAYER_SHIP_VEL + player_ship.width < BORDER.x
     ):  # RIGHT
-        player_ship.move(PLAYER_SHIP_VEL, 0)
+        player_ship.x += PLAYER_SHIP_VEL
 
 
 # def handle_enemy_movement(enemy_ship, bullets):
@@ -102,6 +101,15 @@ def handle_player_bullets(bullets, player_ship, enemy_ship):
         elif bullet.y < 0:
             bullets.remove(bullet)
 
+def new_player_health(player_ship, player_health, enemy_bullets, meteors):
+
+    for bullet in enemy_bullets:
+        if player_ship.colliderect(bullet):
+            player_health -= 1
+    for meteor in meteors:
+        if player_ship.colliderect(meteor):
+            player_health -= 3
+    return player_health
 
 def handle_enemy_bullets(bullets, player_ship, enemy_ship):
     for bullet in bullets:
@@ -152,15 +160,23 @@ def main():
         (WIDTH - ISS_WIDTH) / 2, HEIGHT - ISS_HEIGHT, ISS_WIDTH, ISS_HEIGHT
     )
 
-    player = Ship(os.path.join("Images", "playerShip3_blue.png"))
+    player = pygame.Rect(
+        (WIDTH - SPACESHIP_WIDTH) / 2,
+        HEIGHT - SPACESHIP_HEIGHT - ISS_HEIGHT,
+        SPACESHIP_WIDTH,
+        SPACESHIP_HEIGHT,
+    )
+
     player_bullets = []
-    enemy_bullets = []
+    player_health = 10
 
     meteors = []
 
     enemy = pygame.Rect(
         (WIDTH - SPACESHIP_WIDTH) / 2, 0, SPACESHIP_WIDTH, SPACESHIP_HEIGHT
     )
+    enemy_bullets = []
+
 
     clock = pygame.time.Clock()
 
@@ -217,7 +233,7 @@ def main():
     button_pause = Button(10, 10, 200, 50, MUSTARD, "Pausar", font, (255, 255, 255))
     button_despause = Button(10, 10, 200, 50, MUSTARD, "Despausar", font, (255, 255, 255))
 
-    while run:
+    while run and player_health > 0:
         clock.tick(FPS)
         current_time = pygame.time.get_ticks()
 
@@ -256,6 +272,11 @@ def main():
                     )
                     player_bullets.append(bullet)
 
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+                    pygame.quit()
+                    sys.exit()
+
             if button_pause.is_clicked(event):
                 pause = True
                 while pause:
@@ -265,13 +286,25 @@ def main():
                     button_despause.draw(WIN)
                     pygame.display.update()
 
+
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_ESCAPE:
+                    
         keys_pressed = pygame.key.get_pressed()
 
         iss_start(iss)
+
+        player_health = new_player_health(player, player_health, enemy_bullets, meteors)
+        
         handle_movement_player(keys_pressed, player)
         handle_player_bullets(player_bullets, player, enemy)
         handle_enemy_bullets(enemy_bullets, player, enemy)
         handle_meteors(meteors, player, player_bullets)
+
+        if player_health <= 0:
+            run = False
+            pygame.quit()
+            sys.exit()
 
         draw_window(iss, player, enemy, player_bullets, enemy_bullets, meteors, button_pause)
 
