@@ -1,5 +1,6 @@
 import pygame, sys, os
 import numpy as np
+from GameObjects.PlayerShip import PlayerShip
 
 WIDTH, HEIGHT = 540, 960
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -9,7 +10,7 @@ WHITE = (255, 255, 255)
 
 FPS = 60
 
-BORDER = pygame.Rect(WIDTH, 0, 10, HEIGHT)
+BORDER = pygame.Rect(0, 0, WIDTH, HEIGHT)
 BACKGROUND_IMAGE = pygame.transform.scale(
     pygame.image.load(os.path.join("Images", "background.png")), (WIDTH, HEIGHT)
 )
@@ -37,8 +38,18 @@ PLAYER_BLUE_SPACESHIP = pygame.transform.scale(
     (SPACESHIP_WIDTH, SPACESHIP_HEIGHT),
 )
 
+PLAYER_RED_SPACESHIP = pygame.transform.scale(
+    pygame.image.load(os.path.join("Images", "playerShip2_red.png")),
+    (SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
+)
+
 PLAYER_BLUE_BULLET = pygame.transform.scale(
     pygame.image.load(os.path.join("Images", "laserBlue16.png")),
+    (BULLET_WIDTH, BULLET_HEIGHT),
+)
+
+PLAYER_GREEN_BULLET = pygame.transform.scale(
+    pygame.image.load(os.path.join("Images", "laserGreen13.png")),
     (BULLET_WIDTH, BULLET_HEIGHT),
 )
 
@@ -70,7 +81,7 @@ def handle_movement_player(keys_pressed, player_ship):
 
     if (
         keys_pressed[pygame.K_d]
-        and player_ship.x + PLAYER_SHIP_VEL + player_ship.width < BORDER.x
+        and player_ship.x + PLAYER_SHIP_VEL + player_ship.width < BORDER.width
     ):  # RIGHT
         player_ship.x += PLAYER_SHIP_VEL
 
@@ -79,7 +90,7 @@ def handle_movement_player(keys_pressed, player_ship):
 
     if (
         keys_pressed[pygame.K_s]
-        and player_ship.y + PLAYER_SHIP_VEL + player_ship.height < HEIGHT - 15
+        and player_ship.y + PLAYER_SHIP_VEL + player_ship.height < BORDER.height - 15
     ):  # DOWN
         player_ship.y += PLAYER_SHIP_VEL
 
@@ -100,16 +111,13 @@ def handle_player_bullets(bullets, player_ship, enemy_ship):
 
 def new_player_health(player_ship, player_health, enemy_bullets, meteors):
 
-    print(enemy_bullets,meteors)
 
     for bullet in enemy_bullets:
         if player_ship.colliderect(bullet):
             player_health -= 1
-            print('colidiu com  bala')
     for meteor in meteors:
         if player_ship.colliderect(meteor):
             player_health -= 3
-            print('colidiu com meteoro')
     return player_health
 
 def handle_enemy_bullets(bullets, player_ship, enemy_ship):
@@ -133,9 +141,9 @@ def handle_meteors(meteors, player_ship, player_bullets):
                 player_bullets.remove(bullet)
 
 
-def draw_window(space_station, player_ship, enemy_ship, player_bullets, enemy_bullets, meteors):
-    WIN.blit(BACKGROUND_IMAGE, (0, 0))
+def draw_window(space_station, player_ship, test_player, enemy_ship, player_bullets, enemy_bullets, meteors):
     pygame.draw.rect(WIN, WHITE, BORDER)
+    WIN.blit(BACKGROUND_IMAGE, (0, 0))
 
     WIN.blit(SPACE_STATION, (space_station.x, space_station.y))
     WIN.blit(PLAYER_BLUE_SPACESHIP, (player_ship.x, player_ship.y))
@@ -150,6 +158,8 @@ def draw_window(space_station, player_ship, enemy_ship, player_bullets, enemy_bu
     for meteor in meteors:
         WIN.blit(BROWN_METEOR, (meteor.x, meteor.y))
 
+    test_player.draw(WIN)
+
     pygame.display.update()
 
 
@@ -158,6 +168,8 @@ def main():
     iss = pygame.Rect(
         (WIDTH - ISS_WIDTH) / 2, HEIGHT - ISS_HEIGHT, ISS_WIDTH, ISS_HEIGHT
     )
+
+    test_player = PlayerShip((WIDTH - SPACESHIP_WIDTH) / 2,HEIGHT - SPACESHIP_HEIGHT - ISS_HEIGHT,PLAYER_RED_SPACESHIP)
 
     player = pygame.Rect(
         (WIDTH - SPACESHIP_WIDTH) / 2,
@@ -189,7 +201,6 @@ def main():
     while run and player_health > 0:
         clock.tick(FPS)
         current_time = pygame.time.get_ticks()
-
 
         if current_time - ENEMY_SHOOT_TIME > ENEMY_SHOOT_DELAY:
             bullet = pygame.Rect(
@@ -224,11 +235,16 @@ def main():
                         BULLET_WIDTH,
                     )
                     player_bullets.append(bullet)
-                
+                    test_player.shoot(WIN)
                 if event.key == pygame.K_ESCAPE:
                     run = False
                     pygame.quit()
                     sys.exit()
+                
+        for bullet in test_player.bullets:
+            bullet.move()
+                
+
 
             # if event.type == pygame.KEYDOWN:
             #     if event.key == pygame.K_ESCAPE:
@@ -240,7 +256,9 @@ def main():
         player_health = new_player_health(player, player_health, enemy_bullets, meteors)
         
         handle_movement_player(keys_pressed, player)
+        test_player.move(keys_pressed, BORDER)
         handle_player_bullets(player_bullets, player, enemy)
+        #test_player.shoot(keys_pressed)
         handle_enemy_bullets(enemy_bullets, player, enemy)
         handle_meteors(meteors, player, player_bullets)
 
@@ -249,7 +267,10 @@ def main():
             pygame.quit()
             sys.exit()
 
-        draw_window(iss, player, enemy, player_bullets, enemy_bullets, meteors)
+        draw_window(iss, player, test_player, enemy, player_bullets, enemy_bullets, meteors)
+        for bullet in test_player.bullets:
+            bullet.draw(WIN)
+        pygame.display.update()
 
 
 if __name__ == "__main__":

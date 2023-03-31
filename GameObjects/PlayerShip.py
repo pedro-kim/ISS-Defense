@@ -30,7 +30,6 @@ class PlayerShip(GameObject):
     def shoot(self, surface):
         #if key_pressed[pygame.K_SPACE]:
         bullet = Projectile(self.x + self.width / 2 - 5, self.y + self.height / 2)
-        
         self.bullets.append(bullet)
         for bull in self.bullets:
             bull.draw(surface)

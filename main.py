@@ -1,16 +1,24 @@
 import pygame
+import os
 
 WIDTH, HEIGHT = 540, 960
 WIN = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("ISS Defense")
 
-FPS = 60
-
-BACKGROUND_IMAGE = pygame.image.load("Images/background.png")
+BACKGROUND_IMAGE = (
+    pygame.transform.scale(
+        pygame.image.load(
+            os.path.join('Images', 'background.png')
+        ),
+    (WIDTH,HEIGHT)
+    )
+)
 
 WIN.blit(BACKGROUND_IMAGE, (0, 0))
 
 pygame.display.update()
+
+def draw_window(player_ship, enemy_ship, health_bar):
 
 
 def main():
