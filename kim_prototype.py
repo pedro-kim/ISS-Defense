@@ -98,6 +98,19 @@ def handle_player_bullets(bullets, player_ship, enemy_ship):
         elif bullet.y < 0:
             bullets.remove(bullet)
 
+def new_player_health(player_ship, player_health, enemy_bullets, meteors):
+
+    print(enemy_bullets,meteors)
+
+    for bullet in enemy_bullets:
+        if player_ship.colliderect(bullet):
+            player_health -= 1
+            print('colidiu com  bala')
+    for meteor in meteors:
+        if player_ship.colliderect(meteor):
+            player_health -= 3
+            print('colidiu com meteoro')
+    return player_health
 
 def handle_enemy_bullets(bullets, player_ship, enemy_ship):
     for bullet in bullets:
@@ -153,7 +166,7 @@ def main():
         SPACESHIP_HEIGHT,
     )
     player_bullets = []
-    enemy_bullets = []
+    player_health = 10
 
     meteors = []
 
@@ -161,6 +174,8 @@ def main():
     enemy = pygame.Rect(
         (WIDTH - SPACESHIP_WIDTH) / 2, 0, SPACESHIP_WIDTH, SPACESHIP_HEIGHT
     )
+    enemy_bullets = []
+
 
     clock = pygame.time.Clock()
 
@@ -171,7 +186,7 @@ def main():
     METEOR_TIME_DELAY = 500
 
     run = True
-    while run:
+    while run and player_health > 0:
         clock.tick(FPS)
         current_time = pygame.time.get_ticks()
 
@@ -209,14 +224,30 @@ def main():
                         BULLET_WIDTH,
                     )
                     player_bullets.append(bullet)
+                
+                if event.key == pygame.K_ESCAPE:
+                    run = False
+                    pygame.quit()
+                    sys.exit()
 
+            # if event.type == pygame.KEYDOWN:
+            #     if event.key == pygame.K_ESCAPE:
+                    
         keys_pressed = pygame.key.get_pressed()
 
         iss_start(iss)
+
+        player_health = new_player_health(player, player_health, enemy_bullets, meteors)
+        
         handle_movement_player(keys_pressed, player)
         handle_player_bullets(player_bullets, player, enemy)
         handle_enemy_bullets(enemy_bullets, player, enemy)
         handle_meteors(meteors, player, player_bullets)
+
+        if player_health <= 0:
+            run = False
+            pygame.quit()
+            sys.exit()
 
         draw_window(iss, player, enemy, player_bullets, enemy_bullets, meteors)
 
