@@ -1,4 +1,4 @@
-width_dimensions = {
+width = {
     "screen": 540,
     "spaceship": 55,
     "bullet": 10,
@@ -7,7 +7,7 @@ width_dimensions = {
     "planet":400
 }
 
-height_dimensions = {
+height = {
     "screen": 960,
     "spaceship": 40,
     "bullet": 20,
