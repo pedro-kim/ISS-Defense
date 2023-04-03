@@ -8,7 +8,7 @@ from handlers.meteors import handle_meteors
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
-from constants.images import background_img, iss_img, spaceships_img, meteors_img
+from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img
 
 WIN = pygame.display.set_mode((width.get("screen"), height.get("screen")))
 pygame.display.set_caption("ISS Defense")
@@ -40,10 +40,22 @@ def iss_start(space_station):
 #             player_health -= 3
 #     return player_health
 
-def draw_window(space_station, player, enemy, meteors, button_pause, current_time):
-    # WIN.blit(background_img.get("first_background"), (0, 0))
+def draw_window(PLANET_TIME,planet_frame,current_time,space_station, player, enemy, meteors, button_pause):
+    WIN.blit(space_background_img.get("space_background"), (0, 0))
+
+    if current_time - PLANET_TIME > FPS:
+        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+            (width.get("screen") - width.get("planet"))/2,
+            (height.get("screen") - height.get("planet"))/2))
+        PLANET_TIME = current_time
+        planet_frame[0] += 1
+        if planet_frame[0] >= 2025: planet_frame[0] = 0
+    else:
+        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+            (width.get("screen") - width.get("planet"))/2,
+            (height.get("screen") - height.get("planet"))/2))
     #pygame.draw.rect(WIN, colors.get("white"), BORDER)
-    WIN.blit(background_img.get("first_background"), (0, 0))
+    #WIN.blit(background_img.get("space_background"), (0, 0))
 
     WIN.blit(iss_img.get("first_iss"), (space_station.x, space_station.y))
     for bullet in player.bullets:
@@ -85,6 +97,7 @@ def main():
 
     meteors = []
 
+    planet_frame = [0]
 
     clock = pygame.time.Clock()
 
@@ -93,6 +106,8 @@ def main():
 
     METEOR_TIME = 0
     METEOR_TIME_DELAY = 500
+
+    PLANET_TIME = 0
 
     ### Inicial Screens
     run = False
@@ -122,16 +137,16 @@ def main():
 
 
         if screenHistory[-1] is START_SCREEN:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             button_play.draw(WIN)
             button_instructions.draw(WIN) 
             button_history.draw(WIN) 
         if screenHistory[-1] is INSTRUCTIONS_SCREEN:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         if screenHistory[-1] is HISTORY_SCREEN:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         
@@ -190,7 +205,7 @@ def main():
             run = False
             main()
 
-        draw_window(iss, player, enemy, meteors, button_pause, current_time)
+        draw_window(PLANET_TIME,planet_frame,current_time,iss, player, enemy, meteors, button_pause)
         pygame.display.update()
 
 
