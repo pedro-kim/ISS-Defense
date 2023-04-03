@@ -1,4 +1,5 @@
 import pygame
+from constants.dimensions import height, width
 from GameObjects.GameObject import GameObject
 from GameObjects.Projectile import Projectile
 
@@ -11,25 +12,25 @@ class PlayerShip(GameObject):
         self.vel = 5
         super().__init__(x, y, self.width, self.height, image)
 
-    def move(self, keys_pressed, screen_border):
+    def move(self, keys_pressed):
         if keys_pressed[pygame.K_w] and self.y - self.vel > 0:  # Move up
             self.y -= self.vel
         if keys_pressed[pygame.K_a] and self.x - self.vel > 0:  # Move left
             self.x -= self.vel
         if (
             keys_pressed[pygame.K_s]
-            and self.y + self.height + self.vel < screen_border.height
+            and self.y + self.height + self.vel < height.get('screen')
         ):  # Move down
             self.y += self.vel
         if (
             keys_pressed[pygame.K_d]
-            and self.x + self.width + self.vel < screen_border.width
+            and self.x + self.width + self.vel < width.get('screen')
         ):  # Move right
             self.x += self.vel
 
     def shoot(self, surface):
         #if key_pressed[pygame.K_SPACE]:
-        bullet = Projectile(self.x + self.width / 2 - 5, self.y + self.height / 2)
+        bullet = Projectile(self.x + self.width / 2 - 5, self.y + self.height / 2, 10)
         self.bullets.append(bullet)
         for bull in self.bullets:
             bull.draw(surface)
