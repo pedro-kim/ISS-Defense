@@ -4,7 +4,7 @@ from GameObjects.PlayerShip import PlayerShip
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width_dimensions, height_dimensions
-from constants.images import background_img, iss_img, spaceships_img, bullets_img, meteors_img
+from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, bullets_img, meteors_img
 from GameObjects.Button import Button
 
 WIN = pygame.display.set_mode((width_dimensions.get("screen"), height_dimensions.get("screen")))
@@ -95,11 +95,22 @@ def handle_meteors(meteors, player_ship, player_bullets):
                 meteors.remove(meteor)
                 player_bullets.remove(bullet)
 
+def draw_window(PLANET_TIME,planet_frame,current_time,space_station, player_ship, test_player, enemy_ship, player_bullets, enemy_bullets, meteors, button_pause):
+    WIN.blit(space_background_img.get("space_background"), (0, 0))
 
-def draw_window(space_station, player_ship, test_player, enemy_ship, player_bullets, enemy_bullets, meteors, button_pause):
-    WIN.blit(background_img.get("first_background"), (0, 0))
+    if current_time - PLANET_TIME > FPS:
+        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+            (width_dimensions.get("screen") - width_dimensions.get("planet"))/2,
+            (height_dimensions.get("screen") - height_dimensions.get("planet"))/2))
+        PLANET_TIME = current_time
+        planet_frame[0] += 1
+        if planet_frame[0] >= 2025: planet_frame[0] = 0
+    else:
+        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+            (width_dimensions.get("screen") - width_dimensions.get("planet"))/2,
+            (height_dimensions.get("screen") - height_dimensions.get("planet"))/2))
     #pygame.draw.rect(WIN, colors.get("white"), BORDER)
-    WIN.blit(background_img.get("first_background"), (0, 0))
+    #WIN.blit(background_img.get("space_background"), (0, 0))
 
     WIN.blit(iss_img.get("first_iss"), (space_station.x, space_station.y))
     WIN.blit(spaceships_img.get("player_blue3"), (player_ship.x, player_ship.y))
@@ -145,6 +156,7 @@ def main():
     )
     enemy_bullets = []
 
+    planet_frame = [0]
 
     clock = pygame.time.Clock()
 
@@ -154,6 +166,7 @@ def main():
     METEOR_TIME = 0
     METEOR_TIME_DELAY = 500
 
+    PLANET_TIME = 0
     # Telas iniciais pre-jogo
     run = False
 
@@ -182,16 +195,16 @@ def main():
 
 
         if screenHistory[-1] == 0:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             button_play.draw(WIN)
             button_instructions.draw(WIN) 
             button_history.draw(WIN) 
         if screenHistory[-1] == 1:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         if screenHistory[-1] == 2:
-            WIN.blit(background_img.get("first_background"), (0, 0))
+            WIN.blit(space_background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         
@@ -279,7 +292,7 @@ def main():
             pygame.quit()
             sys.exit()
 
-        draw_window(iss, player, test_player,enemy, player_bullets, enemy_bullets, meteors, button_pause)
+        draw_window(PLANET_TIME,planet_frame,current_time,iss, player, test_player,enemy, player_bullets, enemy_bullets, meteors, button_pause)
         for bullet in test_player.bullets:
             bullet.draw(WIN)
         pygame.display.update()

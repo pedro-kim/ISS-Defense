@@ -3,7 +3,8 @@ width_dimensions = {
     "spaceship": 55,
     "bullet": 10,
     "iss": 490,
-    "meteor": 40
+    "meteor": 40,
+    "planet":400
 }
 
 height_dimensions = {
@@ -11,5 +12,6 @@ height_dimensions = {
     "spaceship": 40,
     "bullet": 20,
     "iss": 353,
-    "meteor": 35
+    "meteor": 35,
+    "planet":400
 }
