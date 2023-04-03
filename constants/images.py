@@ -16,14 +16,14 @@ frames_img = pg.image.load(os.path.join("Images", "planet_background.png"))
 for j in range(25):
     for i in range(81):
         #frames_img.subsurface(i*128,0,128,128),
-        frame = pg.transform.scale(frames_img.subsurface(i*200,j*200,200,200),(width_dimensions.get("planet"), height_dimensions.get("planet")))
+        frame = pg.transform.scale(frames_img.subsurface(i*200,j*200,200,200),(width.get("planet"), height.get("planet")))
         planet_frames.append(frame)
 
 planet_background_img = { "planet_background": planet_frames}
 
 space_background_img = {
     "space_background": pg.transform.scale(
-        pg.image.load(os.path.join("Images", "space_background.png")).subsurface(400,0,353,360), (width_dimensions.get("screen"), height_dimensions.get("screen"))
+        pg.image.load(os.path.join("Images", "space_background.png")).subsurface(400,0,353,360), (width.get("screen"), height.get("screen"))
     )
 }
 
