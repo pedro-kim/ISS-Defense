@@ -8,7 +8,7 @@ pygame.display.set_caption("ISS Defense")
 BACKGROUND_IMAGE = (
     pygame.transform.scale(
         pygame.image.load(
-            os.path.join('Images', 'background.png')
+            os.path.join('images', 'background.png')
         ),
     (WIDTH,HEIGHT)
     )

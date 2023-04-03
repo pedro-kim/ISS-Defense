@@ -1,14 +1,14 @@
 import pygame, sys
 import numpy as np
-from GameObjects.PlayerShip import PlayerShip
-from GameObjects.EnemyShip import EnemyShip
+from classes.PlayerShip import PlayerShip
+from classes.EnemyShip import EnemyShip
+from classes.Button import Button
 from handlers.bullets import handle_player_bullets, handle_enemy_bullets
 from handlers.meteors import handle_meteors
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
 from constants.images import background_img, iss_img, spaceships_img, meteors_img
-from GameObjects.Button import Button
 
 WIN = pygame.display.set_mode((width.get("screen"), height.get("screen")))
 pygame.display.set_caption("ISS Defense")

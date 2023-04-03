@@ -1,7 +1,7 @@
 import pygame
 from constants.dimensions import height, width
-from GameObjects.GameObject import GameObject
-from GameObjects.Projectile import Projectile
+from classes.GameObject import GameObject
+from classes.Projectile import Projectile
 
 class PlayerShip(GameObject):
     def __init__(self, x, y, image):
