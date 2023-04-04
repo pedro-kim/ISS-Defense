@@ -2,9 +2,10 @@ import pygame, sys
 import numpy as np
 from classes.PlayerShip import PlayerShip
 from classes.EnemyShip import EnemyShip
+from classes.Meteor import Meteor
 from classes.Button import Button
-from handlers.bullets import handle_player_bullets, handle_enemy_bullets
-from handlers.meteors import handle_meteors
+from secondary_functions.collide_bullets import collide_enemy_bullets, collide_player_bullets
+from secondary_functions.collide_meteors import collide_meteors
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
@@ -67,7 +68,7 @@ def draw_window(PLANET_TIME,planet_frame,current_time,space_station, player, ene
         bullet.move()
         bullet.draw(WIN)
     for meteor in meteors:
-        WIN.blit(meteors_img.get("brown1"), (meteor.x, meteor.y))
+        meteor.draw(WIN)
 
     player.draw(WIN)
     enemy.draw(WIN)
@@ -156,6 +157,8 @@ def main():
     button_pause = Button(10, 10, 200, 50, colors.get("mustard"), "Pausar", font, (255, 255, 255))
     button_despause = Button(10, 10, 200, 50, colors.get("mustard"), "Despausar", font, (255, 255, 255))
 
+    esc_paused = False
+
     ### Game Screen
     while run:
         clock.tick(FPS)
@@ -164,8 +167,12 @@ def main():
 
         if current_time - METEOR_TIME > METEOR_TIME_DELAY:
             random_meteor_x = int((width.get("screen") - width.get("meteor")) * np.random.random())
+            if (np.random.random() > 0.75):
+                random_meteor_type = 'grey'
+            else:
+                random_meteor_type = 'brown'
             if random_meteor_x + width.get("meteor") < enemy.x or random_meteor_x > enemy.x + width.get("spaceship"):
-                new_meteor = pygame.Rect(random_meteor_x, -35, height.get("meteor"), width.get("meteor"))
+                new_meteor = Meteor(random_meteor_x, -35, type=random_meteor_type)
                 meteors.append(new_meteor)
                 METEOR_TIME = current_time
 
@@ -181,25 +188,34 @@ def main():
                     player.shoot(WIN)
 
                 if event.key == pygame.K_ESCAPE:
-                    run = False
-                    pygame.quit()
-                    sys.exit()
+                    esc_paused = True
                 
-            if button_pause.is_clicked(event):
+            if button_pause.is_clicked(event) or esc_paused:
                 pause = True
                 while pause:
                     for pause_event in pygame.event.get():
                         if button_despause.is_clicked(pause_event):
                             pause = False
+                            esc_paused = False
+                        if pause_event.type == pygame.KEYDOWN:
+                            if pause_event.key == pygame.K_ESCAPE:
+                                pause = False
+                                esc_paused = False
+                        if pause_event == pygame.QUIT:
+                            pause = False
+                            esc_paused = False
+                            run = False
+                            pygame.quit()
+                            sys.exit()
                     button_despause.draw(WIN)
                     pygame.display.update()
 
 
         iss_start(iss)
         player.move(keys_pressed)
-        handle_player_bullets(player, enemy)
-        handle_enemy_bullets(player, enemy)
-        handle_meteors(meteors, player)
+        collide_player_bullets(player, enemy)
+        collide_enemy_bullets(player, enemy)
+        collide_meteors(meteors, player)
 
         if player.health <= 0:
             run = False

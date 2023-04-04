@@ -1,15 +1,17 @@
 import pygame
 from constants.dimensions import height, width
+from constants.health import health
+from constants.velocities import velocities
 from classes.GameObject import GameObject
 from classes.Projectile import Projectile
 
 class PlayerShip(GameObject):
     def __init__(self, x, y, image):
-        self.width = 55
-        self.height = 40
+        self.width = width.get("spaceship")
+        self.height = height.get("spaceship")
         self.bullets = []
-        self.health = 10
-        self.vel = 5
+        self.health = health.get("player_ship")
+        self.vel = velocities.get("player_ship")
         super().__init__(x, y, self.width, self.height, image)
 
     def move(self, keys_pressed):
