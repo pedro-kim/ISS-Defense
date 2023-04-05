@@ -11,7 +11,7 @@ background_img = {
 
 # Salvando os frames do planeta em uma lista
 planet_frames = []
-frames_img = pg.image.load(os.path.join("Images", "planet_background.png"))
+frames_img = pg.image.load(os.path.join("images", "planet_background.png"))
 
 for j in range(25):
     for i in range(81):
@@ -28,7 +28,7 @@ planet_background_img = { "planet_background": mult_planet_frames}
 
 space_background_img = {
     "space_background": pg.transform.scale(
-        pg.image.load(os.path.join("Images", "space_background.png")).subsurface(400,0,353,360), (width.get("screen"), height.get("screen"))
+        pg.image.load(os.path.join("images", "space_background.png")).subsurface(400,0,353,360), (width.get("screen"), height.get("screen"))
     )
 }
 
@@ -76,6 +76,10 @@ bullets_img = {
 meteors_img = {
     "brown1": pg.transform.scale(
         pg.image.load(os.path.join("images", "meteorBrown_big1.png")),
+        (width.get("meteor"), height.get("meteor")),
+    ),
+    "grey1": pg.transform.scale(
+        pg.image.load(os.path.join("images", "meteorGrey_big1.png")),
         (width.get("meteor"), height.get("meteor")),
     )
 }
