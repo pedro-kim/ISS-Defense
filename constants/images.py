@@ -19,7 +19,12 @@ for j in range(25):
         frame = pg.transform.scale(frames_img.subsurface(i*200,j*200,200,200),(width.get("planet"), height.get("planet")))
         planet_frames.append(frame)
 
-planet_background_img = { "planet_background": planet_frames}
+mult_planet_frames = []
+for item in planet_frames:
+    for i in range(4):
+        mult_planet_frames.append(item)
+
+planet_background_img = { "planet_background": mult_planet_frames}
 
 space_background_img = {
     "space_background": pg.transform.scale(
