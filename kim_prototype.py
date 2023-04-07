@@ -13,8 +13,6 @@ from constants.images import planet_background_img, space_background_img, iss_im
 
 # Initialize the mixer module
 pygame.mixer.init()  
-pygame.mixer.music.load(os.path.join("music", "main_music.mp3"))  # Load the MP3 file
-pygame.mixer.music.play(-1)  # Play the music
 
 # Initialize global variables
 WIN = pygame.display.set_mode((width.get("screen"), height.get("screen")))
@@ -42,7 +40,7 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
             (height.get("screen") - height.get("planet"))/2))
         PLANET_TIME = current_time
         planet_frame[0] += 1
-        if planet_frame[0] >= 2025: planet_frame[0] = 0
+        if planet_frame[0] >= 2025*4: planet_frame[0] = 0
     else:
         WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
             (width.get("screen") - width.get("planet"))/2,
@@ -74,6 +72,9 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
 
 
 def main():
+    
+    pygame.mixer.music.load(os.path.join("music", "main_music.mp3"))  # Load the MP3 file
+    pygame.mixer.music.play(-1)  # Play the music
 
     iss = pygame.Rect(
         (width.get("screen") - width.get("iss")) / 2,
@@ -152,12 +153,15 @@ def main():
 
         pygame.display.update()
 
+    pygame.mixer.music.load(os.path.join("music", "level1_music.mp3"))
+    pygame.mixer.music.play(-1)
+
     while run:
         clock.tick(FPS)
         current_time = pygame.time.get_ticks()
         keys_pressed = pygame.key.get_pressed()
 
-            
+        
 
         if current_time - METEOR_TIME > METEOR_TIME_DELAY:
             random_meteor_x = int((width.get("screen") - width.get("meteor")) * np.random.random())
