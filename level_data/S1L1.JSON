@@ -1,0 +1,51 @@
+{
+    "iss":[
+        {
+            "width": 490,
+            "height": 353,
+            "health": 100,
+            "velocity": 1
+        }
+    ],
+    "player_ship":[
+        {
+            "width": 55,
+            "height": 40,
+            "health": 10,
+            "velocity": 5
+        }
+    ],
+    "enemy_ships":[
+        {
+            "summon_period": 10000,
+            "summon_x": [0.25, 0.5, 0.75],
+            "width": 55,
+            "height": 40,
+            "health": 2,
+            "shoot_period": 3000
+        }
+    ],
+    "meteors":[
+        {
+            "summon_period": 1000,
+            "type": "brown",
+            "width": 40,
+            "height": 35,
+            "health": 1,
+            "velocity": 1
+        }
+    ],
+    "planet":[
+        {
+            "planet_width": 400,
+            "planet_height": 400
+        }
+    ],
+    "buttons":[
+        {
+            "width": 60,
+            "height": 60,
+            "text": "Pause"
+        }
+    ]
+}
