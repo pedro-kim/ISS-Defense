@@ -4,8 +4,8 @@ from classes.PlayerShip import PlayerShip
 from classes.EnemyShip import EnemyShip
 from classes.Meteor import Meteor
 from classes.Button import Button
-from secondary_functions.collide_bullets import collide_enemy_bullets, collide_player_bullets
-from secondary_functions.collide_meteors import collide_meteors
+from utils.collide_bullets import collide_enemy_bullets, collide_player_bullets
+from utils.collide_meteors import collide_meteors
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
@@ -63,7 +63,7 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
     player.draw(WIN)
     enemy.draw(WIN)
     button_pause = pygame.transform.scale(
-        pygame.image.load(os.path.join("images", "tile_0266.png")),
+        pygame.image.load(os.path.join("assets", "images", "tile_0266.png")),
         (60, 60),
     )
     WIN.blit(button_pause, (10, 10))
@@ -73,7 +73,7 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
 
 def main():
     
-    pygame.mixer.music.load(os.path.join("music", "main_music.mp3"))  # Load the MP3 file
+    pygame.mixer.music.load(os.path.join("assets", "music", "main_music.mp3"))  # Load the MP3 file
     pygame.mixer.music.play(-1)  # Play the music
 
     iss = pygame.Rect(
@@ -108,8 +108,8 @@ def main():
     pygame.init()
     clock.tick(20)
     screenHistory = [START_SCREEN]
-    font = pygame.font.Font(os.path.join('fonts', 'RobotoMono-Light.ttf'), 30)
-    title_font = pygame.font.Font(os.path.join('fonts', 'RobotoMono-Regular.ttf'), 54)
+    font = pygame.font.Font(os.path.join("assets", 'fonts', 'RobotoMono-Light.ttf'), 30)
+    title_font = pygame.font.Font(os.path.join("assets", 'fonts', 'RobotoMono-Regular.ttf'), 54)
     button_title = Button(170, 100, 200, 90, colors.get("black"), "ISS Defense", title_font, (255, 255, 255))
     button_play = Button(170, 300, 200, 50, colors.get("red"), "Jogar", font, (255, 255, 255))
     button_instructions = Button(170, 400, 200, 50, colors.get("black"), "Instrucoes", font, (255, 255, 255))
@@ -143,17 +143,15 @@ def main():
             button_history.draw(WIN)
         if screenHistory[-1] is INSTRUCTIONS_SCREEN:
             WIN.blit(space_background_img.get("space_background"), (0, 0))
-            pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         if screenHistory[-1] is HISTORY_SCREEN:
             WIN.blit(space_background_img.get("space_background"), (0, 0))
-            pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         
 
         pygame.display.update()
 
-    pygame.mixer.music.load(os.path.join("music", "level1_music.mp3"))
+    pygame.mixer.music.load(os.path.join("assets", "music", "level1_music.mp3"))
     pygame.mixer.music.play(-1)
 
     while run:
@@ -205,7 +203,7 @@ def main():
                             run = False
                             pygame.quit()
                             sys.exit()
-                    WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("images", "tile_0265.png")),(60, 60),), (10, 10))
+                    WIN.blit(pygame.transform.scale(pygame.image.load(os.path.join("assets", "images", "tile_0265.png")),(60, 60),), (10, 10))
                     pygame.display.update()
 
 

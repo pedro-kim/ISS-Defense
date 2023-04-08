@@ -7,7 +7,7 @@ class Projectile(GameObject):
         self.height = 20
         self.vel = vel
         self.image = pygame.transform.scale(
-            pygame.image.load(os.path.join("images", "laserGreen13.png")),
+            pygame.image.load(os.path.join("assets", "images", "laserGreen13.png")),
             (self.width, self.height),
         )
         super().__init__(x, y, self.width, self.height, self.image)
