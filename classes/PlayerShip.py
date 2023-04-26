@@ -2,6 +2,7 @@ import pygame
 from constants.dimensions import height, width
 from constants.health import health
 from constants.velocities import velocities
+from constants.sounds import sounds
 from classes.GameObject import GameObject
 from classes.Projectile import Projectile
 
@@ -34,6 +35,7 @@ class PlayerShip(GameObject):
         #if key_pressed[pygame.K_SPACE]:
         bullet = Projectile(self.x + self.width / 2 - 5, self.y + self.height / 2, 10)
         self.bullets.append(bullet)
+        sounds['bulllet_sound'].play()
         for bull in self.bullets:
             bull.draw(surface)
 

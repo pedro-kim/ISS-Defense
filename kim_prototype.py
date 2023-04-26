@@ -13,7 +13,6 @@ from constants.fonts import score_font
 from constants.buttons import button_return, button_pause, button_despause, button_play, button_instructions, button_history, button_title
 from screens.instructions import render_instructions_screen
 from screens.history import render_history_screen
-from constants.sounds import sounds
 
 # Initialize the mixer module
 pygame.mixer.init()  

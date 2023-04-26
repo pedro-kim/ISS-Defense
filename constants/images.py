@@ -134,3 +134,13 @@ ui_img = {
         (width.get("player_icon"), height.get("player_icon")),
     )
 }
+keys_img = {
+    "wasd":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "keys.png")).subsurface(50,0,660,450),
+        (350,250 )
+    ),
+    "space":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "keys.png")).subsurface(50,450,660,160),
+        (350,100 )
+    )
+}
