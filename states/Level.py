@@ -16,7 +16,7 @@ from constants.colors import colors
 
 
 class Level(GameState):
-    def __init__(self, screen, level_file):
+    def __init__(self, screen, clock, level_file):
 
         # Sets the screen in which will occur the animations
         self.screen = screen
@@ -65,7 +65,7 @@ class Level(GameState):
         self.planet_frame = [0]
 
         self.fps = 60
-        self.clock = pg.time.Clock()
+        self.clock = clock
 
         #Level buttons
         self.pause_button_x = 10
@@ -118,6 +118,11 @@ class Level(GameState):
         # Blit the Iss object
         self.screen.blit(self.iss.image, (self.iss.x, self.iss.y))
 
+        # Blit the Enemy Ships
+        for enemy in self.enemy_ships:
+            enemy.move()
+            enemy.draw(self.screen)
+
         # Blit the player bullets
         for bullet in self.player.bullets:
             bullet.move()
@@ -148,6 +153,7 @@ class Level(GameState):
         self.pause = True
         while self.pause:
             for pause_event in pg.event.get():
+                self.continue_button.draw(self.screen)
                 if self.continue_button.is_clicked(pause_event):
                     self.pause = False
                     self.esc_paused = False
@@ -155,7 +161,6 @@ class Level(GameState):
                     if pause_event.key == pg.K_ESCAPE:
                         self.pause = False
                         self.esc_paused = False
-                self.continue_button.draw(self.screen)
 
 
     def check_events(self):
@@ -186,7 +191,7 @@ class Level(GameState):
         self.enemy_ships_time = current_time
 
 
-    def summon_brown_meteors(self, current_time):
+    def summom_brown_meteors(self, current_time):
         for enemy in self.enemy_ships:
             if current_time - self.meteors_time > self.brown_meteors_data.get('summon_period'):
                 random_meteor_x = int((width.get("screen") - width.get("meteor"))*np.random.random())
@@ -253,6 +258,9 @@ class Level(GameState):
 
             # Get the pressed keys
             keys_pressed = pg.key.get_pressed()
+
+            #
+            self.summon_enemy_ships(current_time)
 
             # Functions that depend of the passage of time
             self.summom_brown_meteors(current_time)

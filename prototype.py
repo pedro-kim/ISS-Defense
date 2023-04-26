@@ -9,7 +9,7 @@ from secondary_functions.collide_meteors import collide_meteors
 from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
-from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img
+from constants.images import background_img, iss_img, spaceships_img, meteors_img
 
 # Initialize the mixer module
 pygame.mixer.init()  
@@ -34,17 +34,17 @@ def iss_start(space_station):
         space_station.y += velocities.get("iss")
 
 def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, enemy, meteors):
-    WIN.blit(space_background_img.get("space_background"), (0, 0))
+    WIN.blit(background_img.get("space_background"), (0, 0))
 
     if current_time - PLANET_TIME > FPS:
-        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+        WIN.blit(background_img.get("planet_background")[planet_frame[0]], (
             (width.get("screen") - width.get("planet"))/2,
             (height.get("screen") - height.get("planet"))/2))
         PLANET_TIME = current_time
         planet_frame[0] += 1
         if planet_frame[0] >= 2025: planet_frame[0] = 0
     else:
-        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
+        WIN.blit(background_img.get("planet_background")[planet_frame[0]], (
             (width.get("screen") - width.get("planet"))/2,
             (height.get("screen") - height.get("planet"))/2))
 
@@ -135,17 +135,17 @@ def main():
 
 
         if screenHistory[-1] is START_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
+            WIN.blit(background_img.get("space_background"), (0, 0))
             button_title.draw(WIN)
             button_play.draw(WIN)
             button_instructions.draw(WIN) 
             button_history.draw(WIN)
         if screenHistory[-1] is INSTRUCTIONS_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
+            WIN.blit(background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         if screenHistory[-1] is HISTORY_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
+            WIN.blit(background_img.get("space_background"), (0, 0))
             pygame.draw.rect(WIN, colors.get("white"), BORDER)
             button_return.draw(WIN)
         

@@ -8,11 +8,11 @@ class EnemyShip(GameObject):
         self.health = 5
         self.bullets = []
         self.shoot_time = 0
-        self.shoot_delay = 1000
+        self.shoot_period = 1000
         super().__init__(x, y, self.width, self.height, image)
 
     def shoot(self, current_time, surface):
-        if current_time - self.shoot_time > self.shoot_delay:
+        if current_time - self.shoot_time > self.shoot_period:
             new_bullet = Projectile(self.x + self.width / 2 - 5, self.y + self.height / 2, -10)
             self.bullets.append(new_bullet)
             self.shoot_time = current_time

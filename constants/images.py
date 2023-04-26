@@ -2,13 +2,6 @@ import os
 import pygame as pg
 from constants.dimensions import width,height
 
-background_img = {
-    "first_background": pg.transform.scale(
-        pg.image.load(os.path.join("images", "background.png")), (width.get("screen"), height.get("screen"))
-    )
-}
-
-
 # Salvando os frames do planeta em uma lista
 planet_frames = []
 frames_img = pg.image.load(os.path.join("images", "planet_background.png"))
@@ -19,13 +12,27 @@ for j in range(25):
         frame = pg.transform.scale(frames_img.subsurface(i*200,j*200,200,200),(width.get("planet"), height.get("planet")))
         planet_frames.append(frame)
 
-planet_background_img = { "planet_background": planet_frames}
-
-space_background_img = {
+background_img = {
+    "first_background": pg.transform.scale(
+        pg.image.load(os.path.join("images", "background.png")), (width.get("screen"), height.get("screen"))
+    ),
     "space_background": pg.transform.scale(
         pg.image.load(os.path.join("images", "space_background.png")).subsurface(400,0,353,360), (width.get("screen"), height.get("screen"))
-    )
+    ),
+    "planet_background": planet_frames
 }
+
+buttons_img = {
+    "pause_tile": pg.transform.scale(
+        pg.image.load(os.path.join("images", "tile_0266.png")),
+        (width.get('pause_tile'), height.get('pause_tile')),
+    ),
+    "continue_tile": pg.transform.scale(
+        pg.image.load(os.path.join("images", "tile_0265.png")),
+        (width.get('continue_tile'), height.get('continue_tile')),)
+}
+
+#planet_background_img = { "planet_background": planet_frames}
 
 iss_img = {
     "first_iss":pg.transform.scale(
