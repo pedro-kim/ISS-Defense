@@ -9,3 +9,5 @@ button_font = pygame.font.Font(os.path.join(root_directory, "assets", 'fonts', '
 title_font = pygame.font.Font(os.path.join(root_directory, "assets", 'fonts', 'RobotoMono-Regular.ttf'), 54)
 
 score_font = pygame.font.Font(os.path.join(root_directory, "assets", "fonts", "kenvector_future_thin.ttf"), 20)
+
+history_font = pygame.font.Font(os.path.join(root_directory, "assets", 'fonts', 'RobotoMono-Light.ttf'), 18)

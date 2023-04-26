@@ -15,9 +15,9 @@ def collide_meteors(meteors, player, score_list):
             if bullet.colliderect(meteor):
                 if meteor.type == 'brown':
                     meteors.remove(meteor)
-                    score[0] += 100
+                    score_list[0] += 100
                 else:
                     meteor.type = 'brown'
                     meteor.image = meteors_img.get("brown1")
-                    score[0] += 100
+                    score_list[0] += 100
                 player.bullets.remove(bullet)

@@ -43,14 +43,16 @@ def read_high_score():
             SCORING_LIST[1] = data["high_score"]
     except FileNotFoundError:
         SCORING_LIST[1] = 0
+
+    return data
     
-def write_high_score(new_score):
-    if new_score > HIGH_SCORE:
+def write_high_score(new_score, data):
+    if new_score > SCORING_LIST[1]:
         data_file = os.path.join("assets", "data", "scoring.json")
         data["high_score"] = new_score
-        try:
-            with open(data_file, "w") as f:
-                json.dump(data, f)
+        print(new_score)
+        with open(data_file, "w") as f:
+            json.dump(data, f)
 
 
 def draw_window(PLANET_TIME, planet_frame, current_time, space_station, player, enemy, meteors):
@@ -107,7 +109,9 @@ def draw_window(PLANET_TIME, planet_frame, current_time, space_station, player, 
 
 
 def main():
-    
+    data = read_high_score()
+    SCORING_LIST[0] = 0
+
     pygame.mixer.music.load(os.path.join("assets", "music", "main_music.mp3"))  # Load the MP3 file
     pygame.mixer.music.play(-1)  # Play the music
 
@@ -147,7 +151,7 @@ def main():
 
     screenHistory = [START_SCREEN]
 
-    read_high_score()
+    data = read_high_score()
 
     while not run:
 
@@ -158,6 +162,8 @@ def main():
             button_play.draw(WIN)
             button_instructions.draw(WIN) 
             button_history.draw(WIN)
+            text_surface = score_font.render(f'Highest Score:{data["high_score"]}', True, (255, 255, 255))
+            WIN.blit(text_surface, (170, 700))
         if screenHistory[-1] is INSTRUCTIONS_SCREEN:
             render_instructions_screen(WIN)
         if screenHistory[-1] is HISTORY_SCREEN:
@@ -246,12 +252,12 @@ def main():
 
         if player.health <= 0:
             run = False
+            write_high_score(SCORING_LIST[0], data)
             main()
 
         draw_window(PLANET_TIME, planet_frame,current_time,iss, player, enemy, meteors)
         pygame.display.update()
 
-    write_high_score(SCORING_LIST[0])
 
 if __name__ == "__main__":
     main()
