@@ -1,16 +1,24 @@
 import pygame, sys, os, json
 import numpy as np
+
+# Importing classes
 from classes.PlayerShip import PlayerShip
 from classes.EnemyShip import EnemyShip
 from classes.Meteor import Meteor
-from classes.Button import Button
+
+# Importing utils
 from utils.collide_bullets import collide_enemy_bullets, collide_player_bullets
 from utils.collide_meteors import collide_meteors
+from utils.render_planet import render_planet
+
+# Importing constants
+from constants.fonts import score_font
 from constants.velocities import velocities
 from constants.dimensions import width, height
-from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img, ui_img
-from constants.fonts import score_font
+from constants.images import space_background_img, iss_img, spaceships_img, ui_img
 from constants.buttons import button_return, button_pause, button_despause, button_play, button_instructions, button_history, button_title
+
+# Importing screens
 from screens.instructions import render_instructions_screen
 from screens.history import render_history_screen
 
@@ -49,25 +57,14 @@ def write_high_score(new_score, data):
     if new_score > SCORING_LIST[1]:
         data_file = os.path.join("assets", "data", "scoring.json")
         data["high_score"] = new_score
-        print(new_score)
         with open(data_file, "w") as f:
             json.dump(data, f)
 
 
-def draw_window(PLANET_TIME, planet_frame, current_time, space_station, player, enemy, meteors):
+def draw_window(planet_frame, current_time, space_station, player, enemy, meteors):
     WIN.blit(space_background_img.get("space_background"), (0, 0))
 
-    if current_time - PLANET_TIME > FPS:
-        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
-            (width.get("screen") - width.get("planet"))/2,
-            (height.get("screen") - height.get("planet"))/2))
-        PLANET_TIME = current_time
-        planet_frame[0] += 1
-        if planet_frame[0] >= 2025*4: planet_frame[0] = 0
-    else:
-        WIN.blit(planet_background_img.get("planet_background")[planet_frame[0]], (
-            (width.get("screen") - width.get("planet"))/2,
-            (height.get("screen") - height.get("planet"))/2))
+    render_planet(WIN, planet_frame[0])
 
     WIN.blit(iss_img.get("first_iss"), (space_station.x, space_station.y))
 
@@ -133,7 +130,6 @@ def main():
 
     METEOR_TIME = 0
     METEOR_TIME_DELAY = 500
-    PLANET_TIME = 0
 
     meteors = []
 
@@ -254,7 +250,7 @@ def main():
             write_high_score(SCORING_LIST[0], data)
             main()
 
-        draw_window(PLANET_TIME, planet_frame,current_time,iss, player, enemy, meteors)
+        draw_window(planet_frame,current_time,iss, player, enemy, meteors)
         pygame.display.update()
 
 
