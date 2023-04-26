@@ -17,11 +17,12 @@
     ],
     "enemy_ships":[
         {
-            "summon_period": 10000,
+            "summon_period": 1000,
             "summon_x": [0.25, 0.5, 0.75],
             "width": 55,
             "height": 40,
             "health": 2,
+            "velocity": 0.5,
             "shoot_period": 3000
         }
     ],

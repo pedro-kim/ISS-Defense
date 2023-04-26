@@ -4,7 +4,9 @@ width = {
     "bullet": 10,
     "iss": 490,
     "meteor": 40,
-    "planet":400
+    "planet": 400,
+    "pause_tile": 60,
+    "continue_tile": 60
 }
 
 height = {
@@ -13,5 +15,7 @@ height = {
     "bullet": 20,
     "iss": 353,
     "meteor": 35,
-    "planet":400
+    "planet": 400,
+    "pause_tile": 60,
+    "continue_tile": 60
 }

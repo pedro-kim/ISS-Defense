@@ -48,8 +48,8 @@ class PlayerShip(GameObject):
 
     def collide_bullets(self, meteors, enemies):
         for bullet in self.bullets:
+            if bullet.y < 0:
+                self.bullets.remove(bullet)
             for enemy in enemies:
                 if enemy.colliderect(bullet):
-                    self.bullets.remove(bullet)
-                elif bullet.y < 0:
                     self.bullets.remove(bullet)
