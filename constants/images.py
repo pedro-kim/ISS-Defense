@@ -83,3 +83,54 @@ meteors_img = {
         (width.get("meteor"), height.get("meteor")),
     )
 }
+
+ui_img = {
+    "digito_0":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral0.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_1":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral1.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_2":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral2.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_3":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral3.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_4":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral4.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_5":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral5.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_6":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral6.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_7":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral7.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_8":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral8.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_9":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeral9.png")),
+        (width.get("health_digit"), height.get("health_digit")),
+    ),
+    "digito_x":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "numeralX.png")),
+        (width.get("x_icon"), height.get("x_icon")),
+    ),
+    "player_icon":pg.transform.scale(
+        pg.image.load(os.path.join("assets", "images", "playerLife2_red.png")),
+        (width.get("player_icon"), height.get("player_icon")),
+    )
+}

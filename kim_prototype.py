@@ -1,4 +1,4 @@
-import pygame, sys, os
+import pygame, sys, os, json
 import numpy as np
 from classes.PlayerShip import PlayerShip
 from classes.EnemyShip import EnemyShip
@@ -8,7 +8,8 @@ from utils.collide_bullets import collide_enemy_bullets, collide_player_bullets
 from utils.collide_meteors import collide_meteors
 from constants.velocities import velocities
 from constants.dimensions import width, height
-from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img
+from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img, ui_img
+from constants.fonts import score_font
 from constants.buttons import button_return, button_pause, button_despause, button_play, button_instructions, button_history, button_title
 from screens.instructions import render_instructions_screen
 from screens.history import render_history_screen
@@ -21,6 +22,8 @@ pygame.mixer.init()
 WIN = pygame.display.set_mode((width.get("screen"), height.get("screen")))
 pygame.display.set_caption("ISS Defense")
 
+SCORING_LIST = [0,0]
+
 FPS = 60
 
 START_SCREEN = 0
@@ -32,7 +35,25 @@ def iss_start(space_station):
     if space_station.y < height.get("screen"):
         space_station.y += velocities.get("iss")
 
-def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, enemy, meteors):
+def read_high_score():
+    data_file = os.path.join("assets", "data", "scoring.json")
+    try:
+        with open(data_file, "r") as f:
+            data = json.load(f)
+            SCORING_LIST[1] = data["high_score"]
+    except FileNotFoundError:
+        SCORING_LIST[1] = 0
+    
+def write_high_score(new_score):
+    if new_score > HIGH_SCORE:
+        data_file = os.path.join("assets", "data", "scoring.json")
+        data["high_score"] = new_score
+        try:
+            with open(data_file, "w") as f:
+                json.dump(data, f)
+
+
+def draw_window(PLANET_TIME, planet_frame, current_time, space_station, player, enemy, meteors):
     WIN.blit(space_background_img.get("space_background"), (0, 0))
 
     if current_time - PLANET_TIME > FPS:
@@ -48,16 +69,16 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
             (height.get("screen") - height.get("planet"))/2))
 
     WIN.blit(iss_img.get("first_iss"), (space_station.x, space_station.y))
-    
+
     for bullet in player.bullets:
-            bullet.move()
-            bullet.draw(WIN)
+        bullet.move()
+        bullet.draw(WIN)
 
     enemy.shoot(current_time, WIN)
     for bullet in enemy.bullets:
         bullet.move()
         bullet.draw(WIN)
-    
+
     for meteor in meteors:
         meteor.draw(WIN)
 
@@ -69,7 +90,20 @@ def draw_window(PLANET_TIME, planet_frame,current_time,space_station, player, en
     )
     WIN.blit(button_pause, (10, 10))
 
+    WIN.blit(ui_img.get("player_icon"), (width.get("screen") - 120, 20))
+    WIN.blit(ui_img.get("digito_x"), (width.get("screen") - 70, 30))
+    if player.health == 10:
+        WIN.blit(ui_img.get("digito_1"), (width.get("screen") - 50, 20))
+        WIN.blit(ui_img.get("digito_0"), (width.get("screen") - 30, 20))
+    else:
+        WIN.blit(ui_img.get(f"digito_{player.health}"), (width.get("screen") - 40, 20))
+
+    score_to_blit = f"{SCORING_LIST[0]}"
+    score_sfc = score_font.render(score_to_blit, True, (255,255,255))
+    WIN.blit(score_sfc, (width.get("screen") - 120, 50))
+
     pygame.display.update()
+
 
 
 def main():
@@ -112,6 +146,8 @@ def main():
     esc_paused = False
 
     screenHistory = [START_SCREEN]
+
+    read_high_score()
 
     while not run:
 
@@ -206,7 +242,7 @@ def main():
         player.move(keys_pressed)
         collide_player_bullets(player, enemy)
         collide_enemy_bullets(player, enemy)
-        collide_meteors(meteors, player)
+        collide_meteors(meteors, player, SCORING_LIST)
 
         if player.health <= 0:
             run = False
@@ -215,6 +251,7 @@ def main():
         draw_window(PLANET_TIME, planet_frame,current_time,iss, player, enemy, meteors)
         pygame.display.update()
 
+    write_high_score(SCORING_LIST[0])
 
 if __name__ == "__main__":
     main()
