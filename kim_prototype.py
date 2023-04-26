@@ -6,10 +6,12 @@ from classes.Meteor import Meteor
 from classes.Button import Button
 from utils.collide_bullets import collide_enemy_bullets, collide_player_bullets
 from utils.collide_meteors import collide_meteors
-from constants.colors import colors
 from constants.velocities import velocities
 from constants.dimensions import width, height
 from constants.images import planet_background_img, space_background_img, iss_img, spaceships_img, meteors_img
+from constants.buttons import button_return, button_pause, button_despause, button_play, button_instructions, button_history, button_title
+from screens.instructions import render_instructions_screen
+from screens.history import render_history_screen
 
 # Initialize the mixer module
 pygame.mixer.init()  
@@ -19,8 +21,6 @@ WIN = pygame.display.set_mode((width.get("screen"), height.get("screen")))
 pygame.display.set_caption("ISS Defense")
 
 FPS = 60
-
-BORDER = pygame.Rect(0, 0, width.get("screen"), height.get("screen"))
 
 START_SCREEN = 0
 INSTRUCTIONS_SCREEN = 1
@@ -107,20 +107,26 @@ def main():
 
     pygame.init()
     clock.tick(20)
-    screenHistory = [START_SCREEN]
-    font = pygame.font.Font(os.path.join("assets", 'fonts', 'RobotoMono-Light.ttf'), 30)
-    title_font = pygame.font.Font(os.path.join("assets", 'fonts', 'RobotoMono-Regular.ttf'), 54)
-    button_title = Button(170, 100, 200, 90, colors.get("black"), "ISS Defense", title_font, (255, 255, 255))
-    button_play = Button(170, 300, 200, 50, colors.get("red"), "Jogar", font, (255, 255, 255))
-    button_instructions = Button(170, 400, 200, 50, colors.get("black"), "Instrucoes", font, (255, 255, 255))
-    button_history = Button(170, 500, 200, 50, colors.get("black"), "Historia", font, (255, 255, 255))
-    button_return = Button(10, 10, 200, 50, colors.get("mustard"), "Retornar", font, (255, 255, 255))
-    button_pause = Button(10, 10, 50, 50, colors.get("mustard"), "Pausar", font, (255, 255, 255))
-    button_despause = Button(10, 10, 50, 50, colors.get("mustard"), "Despausar", font, (255, 255, 255))
 
     esc_paused = False
 
+    screenHistory = [START_SCREEN]
+
     while not run:
+
+        WIN.blit(space_background_img.get("space_background"), (0, 0))
+        
+        if screenHistory[-1] is START_SCREEN:
+            button_title.draw(WIN)
+            button_play.draw(WIN)
+            button_instructions.draw(WIN) 
+            button_history.draw(WIN)
+        if screenHistory[-1] is INSTRUCTIONS_SCREEN:
+            render_instructions_screen(WIN)
+        if screenHistory[-1] is HISTORY_SCREEN:
+            render_history_screen(WIN)
+
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -135,18 +141,6 @@ def main():
                 screenHistory.pop()
 
 
-        if screenHistory[-1] is START_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
-            button_title.draw(WIN)
-            button_play.draw(WIN)
-            button_instructions.draw(WIN) 
-            button_history.draw(WIN)
-        if screenHistory[-1] is INSTRUCTIONS_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
-            button_return.draw(WIN)
-        if screenHistory[-1] is HISTORY_SCREEN:
-            WIN.blit(space_background_img.get("space_background"), (0, 0))
-            button_return.draw(WIN)
         
 
         pygame.display.update()
