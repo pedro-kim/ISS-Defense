@@ -19,4 +19,7 @@ class Meteor(GameObject):
         self.vel = velocities.get("meteor")
         super().__init__(self.x, self.y, self.width, self.height, self.image)
 
+    def move(self):
+        self.y += self.vel
+
     

@@ -4,7 +4,6 @@ from constants.sounds import sounds
 
 def collide_meteors(meteors, player, score_list):
     for meteor in meteors:
-        meteor.y += meteor.vel
         if player.colliderect(meteor):
             sounds['hit_sound'].play()
             player.health -= 3
