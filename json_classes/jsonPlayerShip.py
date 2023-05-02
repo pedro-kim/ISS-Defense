@@ -1,7 +1,5 @@
 import pygame as pg
 from constants.dimensions import height, width
-from constants.health import health
-from constants.velocities import velocities
 from classes.GameObject import GameObject
 from classes.Projectile import Projectile
 

@@ -2,8 +2,6 @@ import pygame as pg
 import numpy as np
 import json, sys
 
-from states.GameState import GameState
-
 from json_classes.jsonIss import Iss
 from json_classes.jsonPlayerShip import PlayerShip
 from json_classes.jsonEnemyShip import EnemyShip
@@ -15,8 +13,8 @@ from constants.dimensions import width, height
 from constants.colors import colors
 
 
-class Level(GameState):
-    def __init__(self, screen, level_file):
+class Level():
+    def __init__(self, screen, clock, level_file):
 
         # Sets the screen in which will occur the animations
         self.screen = screen
@@ -85,10 +83,7 @@ class Level(GameState):
         self.running = True
         self.pause = False
         self.esc_paused = False
-        self.click_paused = False
-
-        super().__init__(self.screen, level_file)
-        
+        self.click_paused = False        
 
 
         
@@ -139,15 +134,22 @@ class Level(GameState):
         for enemy in self.enemy_ships:
             enemy.draw(self.screen)
 
-
         self.pause_button.draw(self.screen)
+        
 
         pg.display.update()
 
     def pause_loop(self):
         self.pause = True
         while self.pause:
+            self.continue_button.draw(self.screen)
+            pg.display.update()
             for pause_event in pg.event.get():
+                if pause_event.type == pg.QUIT:
+                    self.pause = False
+                    self.running = False
+                    pg.quit()
+                    sys.exit()
                 if self.continue_button.is_clicked(pause_event):
                     self.pause = False
                     self.esc_paused = False
@@ -186,14 +188,14 @@ class Level(GameState):
         self.enemy_ships_time = current_time
 
 
-    def summon_brown_meteors(self, current_time):
-        for enemy in self.enemy_ships:
-            if current_time - self.meteors_time > self.brown_meteors_data.get('summon_period'):
-                random_meteor_x = int((width.get("screen") - width.get("meteor"))*np.random.random())
-                if random_meteor_x + width.get("meteor") < enemy.x or random_meteor_x > enemy.x + enemy.width:
-                    new_meteor = Meteor(random_meteor_x, -35, self.brown_meteors_data)
-                    self.meteors.append(new_meteor)
-                    self.meteors_time = current_time
+    def summom_brown_meteors(self, current_time):
+        #for enemy in self.enemy_ships:
+        if current_time - self.meteors_time > self.brown_meteors_data.get('summon_period'):
+            random_meteor_x = int((width.get("screen") - width.get("meteor"))*np.random.random())
+            if random_meteor_x + width.get("meteor") < enemy.x or random_meteor_x > enemy.x + enemy.width:
+                new_meteor = Meteor(random_meteor_x, -35, self.brown_meteors_data)
+                self.meteors.append(new_meteor)
+                self.meteors_time = current_time
 
     def summom_gray_meteors(self, current_time):
         for enemy in self.enemy_ships:
@@ -212,14 +214,14 @@ class Level(GameState):
     #             elif bullet.y < 0:
     #                 self.player.bullets.remove(bullet)
 
-    # def collide_enemy_bullets(self):
-    #     for enemy in self.enemy_ships:
-    #         for bullet in enemy.bullets:
-    #             if self.player.colliderect(bullet):
-    #                 self.player.health -= 1
-    #                 enemy.bullets.remove(bullet)
-    #             elif bullet.y > height.get("screen"):
-    #                 enemy.bullets.remove(bullet)
+    def collide_enemy_bullets(self):
+        for enemy in self.enemy_ships:
+            for bullet in enemy.bullets:
+                if self.player.colliderect(bullet):
+                    self.player.health -= 1
+                    enemy.bullets.remove(bullet)
+                elif bullet.y > height.get("screen"):
+                    enemy.bullets.remove(bullet)
     
     def collide_meteors(self):
         for meteor in self.meteors:
@@ -254,8 +256,11 @@ class Level(GameState):
             # Get the pressed keys
             keys_pressed = pg.key.get_pressed()
 
+            
+
             # Functions that depend of the passage of time
-            self.summom_brown_meteors(current_time)
+            self.summon_enemy_ships(current_time)
+            #self.summom_brown_meteors(current_time)
 
             self.check_events()
 
@@ -264,11 +269,14 @@ class Level(GameState):
 
             self.player.move(keys_pressed)
             self.player.collide_bullets(self.meteors, self.enemy_ships)
-            
+
             for enemy in self.enemy_ships:
-                enemy.collide_bul
+                enemy.move()
+            
+            #for enemy in self.enemy_ships:
+               # enemy.collide_bul
             # Global Level functions
-            # self.collide_enemy_bullets()
+            self.collide_enemy_bullets()
             # self.collide_player_bullets()
             self.collide_meteors()
 
